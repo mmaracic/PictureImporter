@@ -76,13 +76,13 @@ public class InsertPicture {
         }
         
         final int databaseId;
-        PreparedStatement ps = conn.prepareStatement("SELECT id_base FROM face_req.bases WHERE description = ?;");
+        PreparedStatement ps = conn.prepareStatement("SELECT id FROM face_req.bases WHERE description = ?;");
         ps.setString(1, imageDatabase);
         ResultSet rs = ps.executeQuery();
         if (rs.next()){
             databaseId = rs.getInt(1);
         } else {
-            PreparedStatement ps1 = conn.prepareStatement("INSERT INTO face_req.bases(description, name) VALUES (?, ?) RETURNING id_base;");
+            PreparedStatement ps1 = conn.prepareStatement("INSERT INTO face_req.bases(description, name) VALUES (?, ?) RETURNING id;");
             ps1.setString(1, imageDatabase);
             ps1.setString(2, imageDatabase);
             ResultSet rs1 = ps1.executeQuery();
@@ -114,7 +114,7 @@ public class InsertPicture {
                 } else {
                     personImages.put(person, 1);
                     try {
-                        PreparedStatement ps = conn.prepareStatement("INSERT INTO face_req.person_on_photo(name)VALUES (?) RETURNING id;");
+                        PreparedStatement ps = conn.prepareStatement("INSERT INTO face_req.person_on_photo(name) VALUES (?) RETURNING id;");
                         ps.setString(1, person);
                         ResultSet rs = ps.executeQuery();
                         rs.next();
@@ -136,7 +136,7 @@ public class InsertPicture {
                 try {
                     baos = new ByteArrayOutputStream();
                     ImageIO.write(im, "png", baos);
-                    PreparedStatement ps = conn.prepareStatement("INSERT INTO face_req.picture(num_of_pic, height, width, format, id_owner, id_base, picture, description)VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+                    PreparedStatement ps = conn.prepareStatement("INSERT INTO face_req.picture(pic_index, height, width, format, owner_id, base_id, picture, description)VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
 
                     ps.setInt(1, pic_order);
                     ps.setInt(2, im.getHeight());
